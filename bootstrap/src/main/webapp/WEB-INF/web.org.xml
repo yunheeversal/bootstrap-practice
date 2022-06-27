@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+		http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	version="3.1">
+
+	<!-- 커넥션 관련 코드 -->
+	<listener>
+		<listener-class>jdbc.DBCPInitListener</listener-class>
+	</listener>
+	<context-param>
+		<param-name>poolConfig</param-name>
+		<param-value>
+jdbcdriver=com.mysql.jdbc.Driver
+jdbcUrl=jdbc:mysql://localhost:3306/board?characterEncoding=utf8
+dbUser=jspexam
+dbPass=jsppw
+validationQuery=select 1
+minIdle=3
+maxTotal=30
+poolName=board
+</param-value>
+	</context-param>
+
+
+	<!-- <servlet> <servlet-name>DBCPInit</servlet-name> xml 실행되면 이 DBCPInit클래스가 
+		실행됨. <servlet-class>jdbc.DBCPInit</servlet-class> <init-param> <param-name>jdbcdriver</param-name> 
+		<param-value>com.mysql.jdbc.Driver</param-value> </init-param> <init-param> 
+		<param-name>jdbcUrl</param-name> <param-value> jdbc:mysql://localhost:3306/guestbook?characterEncoding=utf8 
+		</param-value> </init-param> <init-param> <param-name>dbUser</param-name> 
+		<param-value>jspexam</param-value> </init-param> <init-param> <param-name>dbPass</param-name> 
+		<param-value>jsppw</param-value> </init-param> <init-param> <param-name>poolName</param-name> 
+		<param-value>guestbook</param-value> </init-param> <load-on-startup>1</load-on-startup> 
+		</servlet> -->
+
+	<servlet>
+		<servlet-name>ControllerUsingURI</servlet-name>
+		<servlet-class>mvc.controller.ControllerUsingURI</servlet-class>
+		<init-param>
+			<param-name>configFile</param-name>
+			<param-value>
+                /WEB-INF/commandHandlerURI.properties
+            </param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ControllerUsingURI</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+
+	<!-- 로그인 체크 필터 -->
+	<filter>
+		<filter-name>LoginCheck</filter-name>
+		<filter-class>filter.LoginCheckFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>LoginCheckFilter</filter-name>
+		<url-pattern>/changePwd.do</url-pattern>
+		<url-pattern>/article/write.do</url-pattern>
+		<url-pattern>/article/modify.do</url-pattern>
+		<url-pattern>/main/index.do</url-pattern>	
+	</filter-mapping>
+
+
+
+	<!-- 캐릭터 인코딩 필터 -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>util.CharacterEncodingFilter</filter-class>
+
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- 첫 페이지로 가도록 -->
+	<welcome-file-list>
+		<welcome-file>/WEB-INF/view/login/loginForm.jsp</welcome-file>
+	</welcome-file-list>
+
+
+
+</web-app>
